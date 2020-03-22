@@ -1,7 +1,7 @@
 package com.wuxiu.forum.dto;
 
 /**
- * 数据传输
+ * 网络传输传输
  */
 public class AccessTokenDTO {
     private String client_id;

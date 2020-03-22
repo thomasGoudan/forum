@@ -1,5 +1,8 @@
 package com.wuxiu.forum.dto;
 
+/**
+ * 封装github用户信息
+ */
 public class GithubUser {
 
     private Long id;
@@ -28,5 +31,14 @@ public class GithubUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "GithubUser{" +
+                "id=" + id +
+                ", bio='" + bio + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
