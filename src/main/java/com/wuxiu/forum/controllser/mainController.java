@@ -18,6 +18,9 @@ public class mainController {
     public String index(HttpServletRequest request){
         //获取客户端cookie,在数据库匹配
         Cookie[] cookies = request.getCookies();
+        if (cookies == null){
+            return "index";
+        }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("token")){
                 String tokenValue = cookie.getValue();
