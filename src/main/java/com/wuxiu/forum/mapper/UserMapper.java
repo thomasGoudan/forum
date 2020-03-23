@@ -13,7 +13,7 @@ public interface UserMapper {
      * 实例化用户
      * @param user
      */
-    @Insert("INSERT INTO  user (NAME,ACCOUNT_ID,TOKEN,GTM_CREATE,GTM_MODIFIED) VALUES (#{name},#{accountId},#{token},#{gtmCreate},#{gtmModified})")
+    @Insert("INSERT INTO  user (NAME,ACCOUNT_ID,TOKEN,GTM_CREATE,GTM_MODIFIED,AVATAR_URL) VALUES (#{name},#{accountId},#{token},#{gtmCreate},#{gtmModified},#{avatarUrl})")
     void insert(User user);
 
     /**
@@ -23,4 +23,12 @@ public interface UserMapper {
      */
     @Select("SELECT  * FROM user WHERE token = #{token}")
     User findUserByToken(@Param("token") String tokenValue);
+
+    /**
+     * 通过id获取用户
+     * @param creator
+     * @return
+     */
+    @Select("SELECT * FROM user WHERE id = #{id}")
+    User findUserById(@Param("id") Integer creator);
 }
