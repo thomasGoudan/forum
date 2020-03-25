@@ -1,5 +1,6 @@
 package com.wuxiu.forum.mapper;
 
+import com.wuxiu.forum.dto.QuestionDTO;
 import com.wuxiu.forum.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,4 +20,13 @@ public interface QuestionMapper {
 
     @Select("SELECT COUNT(1) from question")
     Integer getQuestionTotal();
+
+    @Select("SELECT * FROM question WHERE creator = #{userId}  LIMIT #{offSet},#{pageSize}")
+    List<Question> getProfileList(@Param("userId") Integer userId, @Param("offSet") Integer offSet,@Param("pageSize") Integer pageSize);
+
+    @Select("SELECT COUNT(1) from question WHERE creator = #{userId}")
+    Integer getUserQuestionListByUserId(Integer userId);
+
+    @Select("SELECT * from question WHERE id = #{userQuestionId}")
+    Question getUserQuestionByQuestionId(Integer userQuestionId);
 }

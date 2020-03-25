@@ -1,10 +1,7 @@
 package com.wuxiu.forum.mapper;
 
 import com.wuxiu.forum.model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
@@ -31,4 +28,19 @@ public interface UserMapper {
      */
     @Select("SELECT * FROM user WHERE id = #{id}")
     User findUserById(@Param("id") Integer creator);
+
+    /**
+     * 通过用户登录账户id获取用户
+     * @param accountId
+     * @return
+     */
+    @Select("SELECT * FROM user WHERE account_id = #{accountId}")
+    User findUserByAccountId(@Param("accountId")String accountId);
+
+    /**
+     * 用户更新
+     * @param userDb
+     */
+    @Update("UPDATE user SET ACCOUNT_ID=#{accountId},NAME=#{name},TOKEN=#{token},GTM_MODIFIED=#{gtmModified},AVATAR_URL=#{avatarUrl} WHERE id = #{id}")
+    void update(User userDb);
 }

@@ -20,3 +20,11 @@ img.img-size{
     font-weight: normal;
     color: #999;
 }
+
+.profile .section{
+    margin-top: 15px;
+}
+.glyphiconMenu{
+    color: #999;
+    font-size: 13px;
+}
