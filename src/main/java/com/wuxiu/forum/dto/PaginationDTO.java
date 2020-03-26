@@ -1,4 +1,4 @@
-package com.wuxiu.forum.model;
+package com.wuxiu.forum.dto;
 
 import com.wuxiu.forum.dto.QuestionDTO;
 import lombok.Data;

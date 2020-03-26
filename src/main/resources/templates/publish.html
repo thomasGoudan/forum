@@ -10,17 +10,20 @@
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发起</h2>
             <hr>
             <form action="/publish" method="post">
+                <input type="hidden" name="questionId" th:value="${questionId}">
                 <div class="form-group">
                     <label for="title">问题标题</label>
-                    <input type="text" class="form-control" name="title" id="title" placeholder="问题标题。。">
+                    <input type="text" class="form-control" th:value="${title}" name="title" id="title" placeholder="问题标题。。">
                 </div>
                 <div class="form-group">
                     <label for="title">问题补充</label>
-                    <textarea name="describe" id="describe" class="form-control" cols="30" rows="10"></textarea>
+                    <textarea name="describe" id="describe" th:text="${describe}" class="form-control" cols="30" rows="10">
+                        ${describe}
+                    </textarea>
                 </div>
                 <div class="form-group">
                     <label for="title">添加标签</label>
-                    <input type="text" class="form-control" name="tig" id="tig" placeholder="添加标签。。">
+                    <input type="text" class="form-control" th:value="${tig}" name="tig" id="tig" placeholder="添加标签。。">
                 </div>
                 <span class="alert alert-danger" th:text="${error}" th:if="${error != null}"></span>
                 <button type="submit" class="btn btn-success btn-publish">发布</button>

@@ -1,7 +1,6 @@
 package com.wuxiu.forum.controllser;
 
-import com.wuxiu.forum.model.PaginationDTO;
-import com.wuxiu.forum.model.User;
+import com.wuxiu.forum.dto.PaginationDTO;
 import com.wuxiu.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class mainController {
+public class MainController {
     @Autowired
     private QuestionService questionService;
 

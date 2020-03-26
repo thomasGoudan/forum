@@ -2,9 +2,11 @@ package com.wuxiu.forum.service;
 
 import com.wuxiu.forum.mapper.UserMapper;
 import com.wuxiu.forum.model.User;
+import com.wuxiu.forum.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -13,18 +15,26 @@ public class UserService {
     private UserMapper userMapper;
 
     public void createOrUpdate(User user) {
-        User userDb = userMapper.findUserByAccountId(user.getAccountId());
-        if (userDb==null){
-
+        //拼接创建查询
+        UserExample userExampleAndAccountId= new UserExample();
+        userExampleAndAccountId.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        List<User> users = userMapper.selectByExample(userExampleAndAccountId);
+        if (users.size() == 0) {
             user.setGtmCreate(System.currentTimeMillis());
             user.setGtmModified(user.getGtmCreate());
             userMapper.insert(user);
-        }else {
-            userDb.setGtmModified(System.currentTimeMillis());
-            userDb.setAvatarUrl(user.getAvatarUrl());
-            userDb.setName(user.getName());
-            userDb.setToken(userDb.getToken());
-            userMapper.update(userDb);
+        } else {
+            User userDb = users.get(0);
+            User updateUser = new User();
+            updateUser.setGtmModified(System.currentTimeMillis());
+            updateUser.setAvatarUrl(user.getAvatarUrl());
+            updateUser.setName(user.getName());
+            updateUser.setToken(user.getToken());
+            //创建拼接查询
+            UserExample userExampleAndId = new UserExample();
+            userExampleAndId.createCriteria().andIdEqualTo(userDb.getId());
+            //跟新数据
+            userMapper.updateByExampleSelective(updateUser, userExampleAndId);
         }
     }
 }

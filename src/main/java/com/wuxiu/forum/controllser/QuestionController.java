@@ -17,9 +17,12 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
+
     @GetMapping("/question/{userQuestionId}")
     public String userQuestionDetail(@PathVariable("userQuestionId") Integer userQuestionId, Model model){
         QuestionDTO questionDTO = questionService.getUserQuestionByQuestionId(userQuestionId);
+        //添加阅读数
+        questionService.incView(userQuestionId);
         model.addAttribute("questionDTO",questionDTO);
         return "question";
     }

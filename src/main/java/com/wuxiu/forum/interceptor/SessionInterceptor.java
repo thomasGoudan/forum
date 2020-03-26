@@ -2,6 +2,7 @@ package com.wuxiu.forum.interceptor;
 
 import com.wuxiu.forum.mapper.UserMapper;
 import com.wuxiu.forum.model.User;
+import com.wuxiu.forum.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
@@ -33,10 +35,13 @@ public class SessionInterceptor implements HandlerInterceptor {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("token")){
                     String tokenValue = cookie.getValue();
-                    User user = userMapper.findUserByToken(tokenValue);
-                    if(user != null){
+                    UserExample userExample = new UserExample();
+                    userExample.createCriteria().andTokenEqualTo(tokenValue);
+                    List<User> users = userMapper.selectByExample(userExample);
+//                    User user = userMapper.findUserByToken(tokenValue);
+                    if(users.size() != 0){
                         //存入session到页面
-                        request.getSession().setAttribute("user",user);
+                        request.getSession().setAttribute("user",users.get(0));
                     }
                     break;
                 }

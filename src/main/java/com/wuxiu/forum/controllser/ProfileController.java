@@ -1,6 +1,6 @@
 package com.wuxiu.forum.controllser;
 
-import com.wuxiu.forum.model.PaginationDTO;
+import com.wuxiu.forum.dto.PaginationDTO;
 import com.wuxiu.forum.model.User;
 import com.wuxiu.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * 个人信息主页
  */
 @Controller
-public class profileController {
+public class ProfileController {
     @Autowired
     private QuestionService questionService;
 
