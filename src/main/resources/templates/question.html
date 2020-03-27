@@ -6,20 +6,64 @@
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h4 th:text="${questionDTO.id}"></h4>
-            <span class="text-desc">
+            <div col-lg-12 col-md-12 col-sm-12 col-xs-12>
+                <h4 th:text="${questionDTO.id}"></h4>
+                <span class="text-desc">
                 作者：<span th:text="${questionDTO.User.name}"></span> |
                 发布时间:<span th:text="${#dates.format(questionDTO.gmtCreate,'yyyy-MM-dd HH:mm')}"></span> |
                 阅读数 :<span th:text="${questionDTO.viewCount}"></span>
             </span>
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${questionDTO.description}">
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${questionDTO.description}">
+                </div>
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment_operate_sp">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment_operate">
+                    <a th:href="@{'/publish/'+${questionDTO.id}}" th:if="${session.user!=null && questionDTO.User.id==session.user.id}">
+                        <span class="glyphicon glyphicon-pencil glyphiconMenu" aria-hidden="true">编辑</span>
+                    </a>
+                </div>
             </div>
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <a th:href="@{'/publish/'+${questionDTO.id}}" th:if="${session.user!=null && questionDTO.User.id==session.user.id}">
-                    <span class="glyphicon glyphicon-pencil glyphiconMenu" aria-hidden="true">编辑</span>
-                </a>
+            <h4>
+                <span th:text="${questionDTO.commentCount}"></span>个回复
+            </h4>
+
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment_commentCount_sp">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment_list" th:each="commentDTO : ${commentDTOList}">
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object img-rounded img-size" th:src="${commentDTO.User.avatarUrl}" alt="...">
+                        </a>
+                    </div>
+                    <div class="media-body comment_body">
+                        <h6 class="media-heading" th:text="${commentDTO.User.name}"></h6>
+                        <div th:text="${commentDTO.content}"></div>
+                        <div class="comment_menu">
+                            <spen class="glyphicon glyphicon-thumbs-up icon"></spen>
+                            <spen class="glyphicon glyphicon-comment icon"></spen>
+                            <span class="pull-right" th:text="${#dates.format(commentDTO.gmtCreate,'yyyy-MM-dd')}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4>提交回复</h4>
+            </div>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 question_revert">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_section">
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object img-rounded img-size" th:src="${questionDTO.User.avatarUrl}" alt="...">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h6 class="media-heading" th:text="${questionDTO.User.name}"></h6>
+                    </div>
+                </div>
+                <input type="hidden" id="question_id" th:value="${questionDTO.id}">
+                <textarea class="form-control commentArea" id="comment_area" rows="6"></textarea>
+                <button type="button" class="btn btn-success btn-comment" onclick="postComment()">回复</button>
             </div>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
@@ -28,7 +72,7 @@
                 <div class="media">
                     <div class="media-left">
                         <a href="#">
-                            <img class="media-object img-circle img-size" th:src="${questionDTO.User.avatarUrl}" alt="...">
+                            <img class="media-object img-rounded img-size" th:src="${questionDTO.User.avatarUrl}" alt="...">
                         </a>
                     </div>
                     <div class="media-body">
@@ -42,5 +86,7 @@
             </div>
         </div>
     </div>
+</div>
+<script src="../js/forum.js"></script>
 </body>
 </html>

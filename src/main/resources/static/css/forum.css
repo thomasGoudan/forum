@@ -10,6 +10,9 @@ body{
     float: right;
     margin-bottom: 15px;
 }
+.media-body{
+    padding: 10px;
+}
 
 img.img-size{
     width: 40px;
@@ -31,4 +34,42 @@ img.img-size{
 
 .jumbotron{
     margin: 50px;
+}
+.commentArea{
+    margin: 10px 0px;
+}
+.btn-comment{
+    float: right;
+    margin-bottom: 10px;
+}
+.comment_commentCount_sp{
+    margin-top: 0px;
+}
+.comment_operate{
+    margin-bottom: 50px;
+}
+.comment_operate_sp{
+    margin-bottom: 0px;
+}
+.comment_menu{
+    color: #999;
+    margin-top: 5px;
+}
+.comment_menu .icon{
+    margin-right: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.comment_menu .icon:hover{
+    color: #499ef3;
+}
+.comment_list{
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+.comment_body{
+    padding: 3px;
+}
+.question_revert{
+    margin-top: 0px;
 }

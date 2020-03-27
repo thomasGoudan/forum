@@ -6,4 +6,5 @@ package com.wuxiu.forum.exception;
 public interface IcustomizeErrorCode {
 
     String getMessage();
+    Integer getCode();
 }

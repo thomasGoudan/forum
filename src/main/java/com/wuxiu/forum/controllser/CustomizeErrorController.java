@@ -1,6 +1,7 @@
 package com.wuxiu.forum.controllser;
 
 
+import com.wuxiu.forum.exception.CustomizeErrorCode;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,10 +31,10 @@ public class CustomizeErrorController implements ErrorController {
         HttpStatus status = this.getStatus(request);
         if (status.is4xxClientError()) {
             //客户端问题
-            model.addAttribute("message", "请求错误,不骗你");
+            model.addAttribute("message", CustomizeErrorCode.QUESTION_NOT_FOUND);
         } else {
             //服务端问题
-            model.addAttribute("message", "服务器出问题了,不骗你");
+            model.addAttribute("message", CustomizeErrorCode.SYS_ERROR);
 
         }
         return new ModelAndView("error");

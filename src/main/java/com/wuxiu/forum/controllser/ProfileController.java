@@ -1,6 +1,7 @@
 package com.wuxiu.forum.controllser;
 
 import com.wuxiu.forum.dto.PaginationDTO;
+import com.wuxiu.forum.exception.CustomizeErrorCode;
 import com.wuxiu.forum.model.User;
 import com.wuxiu.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ProfileController {
                                    @RequestParam(name = "pageSize",defaultValue = "5")Integer pageSize){
         User user = (User)request.getSession().getAttribute("user");
         if (user == null){
-            model.addAttribute("error","用户未登录");
+            model.addAttribute("error", CustomizeErrorCode.NOT_LOGIN);
             return "redirect:/";
         }
         if ("questions".equals(active)) {

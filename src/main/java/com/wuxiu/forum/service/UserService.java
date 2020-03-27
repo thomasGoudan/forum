@@ -22,7 +22,7 @@ public class UserService {
         if (users.size() == 0) {
             user.setGtmCreate(System.currentTimeMillis());
             user.setGtmModified(user.getGtmCreate());
-            userMapper.insert(user);
+            userMapper.insertSelective(user);
         } else {
             User userDb = users.get(0);
             User updateUser = new User();

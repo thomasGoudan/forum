@@ -1,5 +1,6 @@
 package com.wuxiu.forum.controllser;
 
+import com.wuxiu.forum.exception.CustomizeErrorCode;
 import com.wuxiu.forum.mapper.QuestionMapper;
 import com.wuxiu.forum.model.Question;
 import com.wuxiu.forum.model.User;
@@ -33,11 +34,11 @@ public class PublishController {
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("describe") String describe,
                             @RequestParam("tig") String tig,
-                            @RequestParam(value = "questionId", required = false) Integer questionId,
+                            @RequestParam(value = "questionId", required = false) Long questionId,
                             HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
-            model.addAttribute("error", "用户未登录");
+            model.addAttribute("error", CustomizeErrorCode.NOT_LOGIN);
             return "publish";
         }
         model.addAttribute("title", title);
@@ -55,7 +56,7 @@ public class PublishController {
     }
 
     @GetMapping("/publish/{questionId}")
-    public String edit(@PathVariable("questionId") Integer questionId, Model model) {
+    public String edit(@PathVariable("questionId") Long questionId, Model model) {
         Question question = questionService.getQuestionById(questionId);
         model.addAttribute("title", question.getTitle());
         model.addAttribute("describe", question.getDescription());
