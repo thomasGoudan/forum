@@ -1,8 +1,9 @@
 package com.wuxiu.forum.controllser;
 
-import com.wuxiu.forum.dto.CommentCreateDTO;
 import com.wuxiu.forum.dto.CommentDTO;
 import com.wuxiu.forum.dto.QuestionDTO;
+import com.wuxiu.forum.enums.CommentTypeEnum;
+import com.wuxiu.forum.model.Question;
 import com.wuxiu.forum.service.CommentService;
 import com.wuxiu.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,13 @@ public class QuestionController {
     @GetMapping("/question/{userQuestionId}")
     public String userQuestionDetail(@PathVariable("userQuestionId") Long userQuestionId, Model model){
         QuestionDTO questionDTO = questionService.getUserQuestionByQuestionId(userQuestionId);
-        List<CommentDTO> commentDTOList = commentService.listByQuestionId(userQuestionId);
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
+        List<CommentDTO> commentDTOList = commentService.listByTargetId(userQuestionId, CommentTypeEnum.QUESTION);
         //添加阅读数
         questionService.incView(userQuestionId);
         model.addAttribute("questionDTO",questionDTO);
         model.addAttribute("commentDTOList",commentDTOList);
+        model.addAttribute("relatedQuestions",relatedQuestions);
         return "question";
     }
 }

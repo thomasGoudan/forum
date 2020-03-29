@@ -1,35 +1,69 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head}">
-
 </head>
 <body>
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发起</h2>
             <hr>
             <form action="/publish" method="post">
                 <input type="hidden" name="questionId" th:value="${questionId}">
                 <div class="form-group">
                     <label for="title">问题标题</label>
-                    <input type="text" class="form-control" th:value="${title}" name="title" id="title" placeholder="问题标题。。">
+                    <input type="text" class="form-control" autocomplete="off" th:value="${title}" name="title"
+                           id="title" placeholder="问题标题。。">
                 </div>
-                <div class="form-group">
-                    <label for="title">问题补充</label>
-                    <textarea name="describe" id="describe" th:text="${describe}" class="form-control" cols="30" rows="10">
-                        ${describe}
+                <!--editor-->
+                <div class="form-group" id="question-editor">
+                    <textarea style="display:none;" name="describe" id="describe" th:text="${describe}" class="form-control" cols="30" rows="10">
                     </textarea>
                 </div>
+                <script type="text/javascript">
+                    $(function() {
+                        var editor = editormd("question-editor", {
+                            width  : "100%",
+                            height : 600,
+                            path   : "/js/lib/",
+                            delay  :0,
+                            watch  :false,
+                            placeholder : "请输入问题描叙",
+                            //支持图片上传
+                            imageUpload : true,
+                            imageFormats         : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUploadURL       : "/file/upload",             // Upload url
+                        });
+                    });
+                </script>
+
                 <div class="form-group">
                     <label for="title">添加标签</label>
-                    <input type="text" class="form-control" th:value="${tig}" name="tig" id="tig" placeholder="添加标签。。">
+                    <input type="text" class="form-control" autocomplete="off" th:value="${tag}" name="tag" id="tag"
+                           placeholder="添加标签。。" onclick="showSelectTag()">
+                    <div id="select-tag" style="display: none;">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li th:each="selectCategory,selectCategoryStat:${tags}" th:class="${selectCategoryStat.first ? 'active':''}" role="presentation">
+                                <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab" data-toggle="tab"
+                                th:text="${selectCategory.categoryName}"></a></li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" th:id="${selectCategory.categoryName}"  th:each="selectCategory:${tags}"
+                                 th:class="${selectCategoryStat.first ? 'tab-pane active':'tab-pane'}">
+                                <spen class="label label-info" th:each="selectTag:${selectCategory.tags}">
+                                    <span class="glyphicon glyphicon-tags" onclick="selectTag(this)" th:data-tag="${selectTag}" th:text="${selectTag}"></span>
+                                </spen>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <span class="alert alert-danger" th:text="${error}" th:if="${error != null}"></span>
                 <button type="submit" class="btn btn-success btn-publish">发布</button>
             </form>
         </div>
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
             <h3>问题发起指南</h3>
             1、问题标签：请用精简语言描叙
             2、问题补充：请用精简语言描叙
@@ -38,5 +72,6 @@
         </div>
     </div>
 </div>
+<script src="/js/forum.js"></script>
 </body>
 </html>

@@ -10,13 +10,17 @@ import com.wuxiu.forum.dto.PaginationDTO;
 import com.wuxiu.forum.model.Question;
 import com.wuxiu.forum.model.QuestionExample;
 import com.wuxiu.forum.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -28,6 +32,12 @@ public class QuestionService {
     @Autowired
     private QuestionExaMapper questionExaMapper;
 
+    /**
+     * 获取问题列表
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
     public PaginationDTO getList(Integer pageIndex, Integer pageSize) {
         //分页数据
         PaginationDTO paginationDTO = new PaginationDTO();
@@ -53,7 +63,9 @@ public class QuestionService {
         //开始查询处
         Integer offSet = pageSize * (pageIndex - 1);
         //查询每页显示的数据
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offSet, pageSize));
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("GMT_CREATE desc");
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offSet, pageSize));
         if (questionList != null) {
             for (Question question : questionList) {
                 User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -63,14 +75,14 @@ public class QuestionService {
                 questionDTO.setUser(user);
                 questionDTOList.add(questionDTO);
             }
-            paginationDTO.setQuestionDTOList(questionDTOList);
+            paginationDTO.setData(questionDTOList);
 
         }
         return paginationDTO;
     }
 
 
-    /**
+    /**获取自己的问题列表
      * @param userId
      * @param pageIndex
      * @param pageSize
@@ -116,7 +128,7 @@ public class QuestionService {
                 questionDTO.setUser(user);
                 questionDTOList.add(questionDTO);
             }
-            paginationDTO.setQuestionDTOList(questionDTOList);
+            paginationDTO.setData(questionDTOList);
 
         }
         return paginationDTO;
@@ -134,6 +146,10 @@ public class QuestionService {
         return questionDTO;
     }
 
+    /**
+     * 编辑问题
+     * @param question
+     */
     public void createOrUpdate(Question question) {
         if (question.getId() == null) {
             question.setGmtCreate(System.currentTimeMillis());
@@ -173,5 +189,25 @@ public class QuestionService {
         question.setId(userQuestionId);
         question.setViewCount(1);
         questionExaMapper.incView(question);
+    }
+
+    public List<QuestionDTO> selectRelated(QuestionDTO questionDTO) {
+        if(StringUtils.isBlank(questionDTO.getTag())){
+            return new ArrayList<>();
+        }
+        //字符串拼接
+        String[] tags = StringUtils.split(questionDTO.getTag(), ",");
+        String regexTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(regexTag);
+        //转换为DTO
+        List<Question> questionList = questionExaMapper.selectRelated(question);
+        List<QuestionDTO> questionDTOS = questionList.stream().map(q -> {
+            QuestionDTO questionDTO1 = new QuestionDTO();
+            BeanUtils.copyProperties(q,questionDTO1);
+            return questionDTO1;
+        }).collect(Collectors.toList());
+        return questionDTOS;
     }
 }

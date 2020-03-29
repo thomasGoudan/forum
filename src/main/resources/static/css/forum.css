@@ -63,6 +63,10 @@ img.img-size{
 .comment_menu .icon:hover{
     color: #499ef3;
 }
+.comment_menu .active{
+    color: #499ef3;
+}
+
 .comment_list{
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
@@ -72,4 +76,20 @@ img.img-size{
 }
 .question_revert{
     margin-top: 0px;
+}
+.sub-comments{
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #eee;
+    padding-top: 15px;
+}
+.sub-comments .btn-success{
+    margin: 10px 0px;
+}
+.question-tag{
+    margin-right: 5px;
+}
+.related-question{
+    padding: 5px;
+    list-style: none;
 }

@@ -5,3 +5,6 @@
 [spring文档](https://spring.io)
 [github自己查](https://github.com) 
 [自己百度](https://baidu.com)
+
+>mvn flyway:migrate
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate

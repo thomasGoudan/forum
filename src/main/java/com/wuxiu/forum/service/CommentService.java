@@ -2,12 +2,11 @@ package com.wuxiu.forum.service;
 
 import com.wuxiu.forum.dto.CommentDTO;
 import com.wuxiu.forum.enums.CommentTypeEnum;
+import com.wuxiu.forum.enums.NotificationTypeEnum;
+import com.wuxiu.forum.enums.NotificationStatusEnum;
 import com.wuxiu.forum.exception.CustomizeErrorCode;
 import com.wuxiu.forum.exception.CustomizeException;
-import com.wuxiu.forum.mapper.CommentMapper;
-import com.wuxiu.forum.mapper.QuestionExaMapper;
-import com.wuxiu.forum.mapper.QuestionMapper;
-import com.wuxiu.forum.mapper.UserMapper;
+import com.wuxiu.forum.mapper.*;
 import com.wuxiu.forum.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,12 @@ public class CommentService {
     private QuestionExaMapper questionExaMapper;
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private CommentExtMapper commentExtMapper;
+    @Autowired
+    private NotificationMapper notificationMapper;
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         if (comment.getParentId() ==null || comment.getParentId()==0){
             throw  new CustomizeException(CustomizeErrorCode.TARGET_PRAM_NOT_FOUND);
         }
@@ -48,7 +50,19 @@ public class CommentService {
             if (dbComment == null){
                 throw  new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUNT);
             }
+            //回复问题1
+            Question question = questionMapper.selectByPrimaryKey(dbComment.getParentId());
+            if (question == null){
+                throw  new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
             commentMapper.insert(comment);
+            //增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
+            //创建通知
+            createNotify(comment, dbComment.getCommentator(),commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT,question.getId());
         }else {
             //回复问题1
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -58,21 +72,39 @@ public class CommentService {
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExaMapper.incCommentCount(question);
+            //创建通知
+            createNotify(comment,question.getCreator(), commentator.getName(),question.getTitle(), NotificationTypeEnum.REPLY_QUESTION,question.getId());
+
         }
+    }
+
+    private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
+        //通知回复
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());//创建时间
+        notification.setType(notificationType.getType());//类型
+        notification.setOuterId(outerId);//回复谁
+        notification.setNotifiter(comment.getCommentator());//通知人
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());//状态
+        notification.setReceiver(receiver);//评论人
+        notification.setNotifierName(notifierName);//评论人名字
+        notification.setOuterTitle(outerTitle);//评论标题
+        notificationMapper.insert(notification);
     }
 
     /**
      * 通过id查询问题列表
      * @param userQuestionId
+     * @param type
      * @return
      */
-    public List<CommentDTO> listByQuestionId(Long userQuestionId) {
+    public List<CommentDTO> listByTargetId(Long userQuestionId, CommentTypeEnum type) {
 
         //获取评论列表
         CommentExample example = new CommentExample();
         example.createCriteria()//通过id和类型查找
                 .andParentIdEqualTo(userQuestionId)
-                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+                .andTypeEqualTo(type.getType());
         example.setOrderByClause("GMT_CREATE desc");
         List<Comment> commentList = commentMapper.selectByExample(example);
         if (commentList.size() == 0){
